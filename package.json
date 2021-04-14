@@ -1,0 +1,21 @@
+{
+  "name": "yskj-tools",
+  "version": "1.0.1",
+  "description": "元素科技前端公用tools库",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.38.83/big_sc_fn/yskj-tools.git"
+  },
+  "keywords": [
+    "工具"
+  ],
+  "author": "liuqing",
+  "license": "ISC",
+  "__npminstall_done": "Wed Apr 14 2021 15:36:17 GMT+0800 (GMT+08:00)",
+  "_from": "yskj-tools@1.0.0",
+  "_resolved": "https://registry.npm.taobao.org/yskj-tools/download/yskj-tools-1.0.0.tgz"
+}

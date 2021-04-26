@@ -115,3 +115,26 @@ export function _unique(data) {
     let arr = new Set(data)
     return [...arr]
 }
+
+/*
+ *描述: 
+ *作者: liuqing
+ *参数: {}
+ *Date: 2021-04-26 15:01:58
+*/
+export function _getDomain() {
+    let url = window.location.href
+    let domain = url.split("/")
+    if (domain[2]) {
+        if(domain[2].includes('.') && domain[2].split('.')[0]) {
+            if(isNaN(domain[2].split('.')[0])) {
+                domain = domain[2].split('.')[0]
+            }else {
+                domain = domain[2]
+            }
+        }
+    } else {
+        retdomain = ""
+    }
+    return domain
+}

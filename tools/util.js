@@ -126,13 +126,16 @@ export function _formattingTime(time, format = 'MM-DD') {
     }
 }
 
-<<<<<<< Updated upstream
-/**
- * 数组去重
- */
-export function _unique(data) {
-    let arr = new Set(data)
-    return [...arr]
+/*
+ *描述: 数组去重
+ *作者: xiehuan
+ *参数: {
+    arr: 一个数组
+ }
+ *Date: 2021-04-26 15:13:05
+*/
+export function _unique(arr) {
+    return [...new Set(arr)]
 }
 
 /*
@@ -156,16 +159,4 @@ export function _getDomain() {
         retdomain = ""
     }
     return domain
-=======
-/*
- *描述: 数组去重
- *作者: xiehuan
- *参数: {
-    arr: 一个数组
- }
- *Date: 2021-04-26 15:13:05
-*/
-export function _unique(arr) {
-    return [...new Set(arr)]
->>>>>>> Stashed changes
 }

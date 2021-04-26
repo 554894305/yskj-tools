@@ -1,6 +1,11 @@
-/**
- * 人名姓名验证
- */
+/*
+ *描述: 中国大陆姓名验证
+ *作者: xiehuan
+ *参数: {
+    name: 用户输入的姓名
+ }
+ *Date: 2021-04-26 16:30:04
+*/
  export function v_name(name) {
     let regName = /^[\u4e00-\u9fa5]{2,6}$/
     if (!regName.test(name)) {
@@ -10,8 +15,16 @@
 }
 
 /**
- * 手机号码验证
+ * 
  */
+/*
+ *描述: 手机号码验证
+ *作者: xiehuan
+ *参数: {
+    phoneInput: 用户输入的手机号码
+ }
+ *Date: 2021-04-26 16:27:43
+*/
 export function v_phone(phoneInput) {
     phoneInput = Number(phoneInput)
     let myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/
@@ -22,12 +35,16 @@ export function v_phone(phoneInput) {
     }
 }
 
-/**
- * 上传前校验文件是否合法
- * param1: file文件对象
- * param2: 当前校验的对象（video， image）
- * param3: filesize默认大小为10，单位为'MB'，目前支持的单位有'KB', 'MB', 'GB'
- */
+/*
+ *描述: 上传前校验文件是否合法
+ *作者: xiehuan
+ *参数: {
+    file: file文件对象
+    str: 当前校验的对象（video，image，word, excel）
+    filesize: filesize默认大小为10，单位为'MB'，目前支持的单位有'KB', 'MB', 'GB'
+ }
+ *Date: 2021-04-26 16:24:58
+*/
 export function v_file(file, str, filesize = { size: 10, units: 'MB' }) {
     let Dsize
 

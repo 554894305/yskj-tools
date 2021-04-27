@@ -1,6 +1,6 @@
 {
   "name": "yskj-tools",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "元素科技前端公用tools库",
   "main": "index.js",
   "scripts": {

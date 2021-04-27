@@ -40,3 +40,49 @@ export function p_tenantId({
         }
     })
 }
+
+/*
+ *描述: token加密
+ *作者: liuqing
+ *参数: {}
+ *Date: 2021-04-27 15:59:29
+*/
+export function encryToken({
+    url = '',
+    token
+}) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let req = new Request(url, {method: 'POST', cache: 'reload', body: {}, headers: {
+                Authorization: `Bearer ${token}`
+            }})
+            const data = await fetch(req)
+            const responseJson = await data.json()
+            resolve(responseJson)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+/*
+ *描述: token解密
+ *作者: liuqing
+ *参数: {}
+ *Date: 2021-04-27 15:59:29
+*/
+export function decryToken({
+    url = '',
+    token
+}) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let req = new Request(`${url}?oncetoken=${token}`, {method: 'GET', cache: 'reload', body: {}})
+            const data = await fetch(req)
+            const responseJson = await data.json()
+            resolve(responseJson)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}

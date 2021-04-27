@@ -96,7 +96,7 @@ v_file(file, 'image', { size: 10, units: 'MB' })
 参数: {
     logo: 租户标识，默认's_gtn'
     baseUrl: 基础请求地址
-    url: 接口地址，必传
+    url: 接口地址, 默认不传递
 }
 
 p_tenantId({
@@ -108,7 +108,7 @@ p_tenantId({
 ##### <a name="tenant">token加/解密</a>
 ```
 参数: {
-    baseUrl: 基础请求地址，
+    baseUrl: 基础请求地址
     url: token加/解密接口, 默认不传递，
     token: 用户令牌，不加Bearer
 }

@@ -26,7 +26,7 @@ export function p_tenantId({
             tenantStr = _getDomain()
         }
         try {
-            let  req = new Request(`${baseUrl}/${url}?uniqueName=${tenantStr}`, {method, cache: 'reload'})
+            let  req = new Request(`${baseUrl}/${url}?uniqueName=${tenantStr}`, {method: 'GET', cache: 'reload'})
             const tenant = await fetch(req)
             const responseJson = await tenant.json()
             resolve(responseJson)

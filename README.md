@@ -1,35 +1,11 @@
-#### 写在前面的话
+#### 基础工具类方法
+| 方法名|参数说明|参数类型|是否必传|默认值|方法说明|
+|-|:-:|:-:|:-:|:-:|:-:|
+| _query(param1)|url的键| String | 是 | '' | 截取URL参数值
+| _random(param1)|需要生成的随机数位数| Number | 否 | 9 | 生成大位随机数
+| _format(param1, param2)|需要生成的随机数位数| Number | 否 | 9 | [时间格式化](#divtop)
 
-#### _query
-    功能：截取字符串
-    参数：URL参数的键名
-    用法：例如当前URL为 'https://www.yuansu.com/?id=123&name=xh'
-```js
-_query('id') // 123
-_query('name') // xh
-```
-#### <font color="black">_sex</font>
-
-    功能：性别映射
-    参数：后端返回的表示性别的值
-    用法：如下
-```js
-_sex(0) // 女
-_sex(1) // 男
-_sex('female') // 女
-_sex('male') // 男
-```
-
-#### _random
-    功能：生成大位随机数
-    参数：大于 1 的整数，需要几位数的随机数就传入几，默认为 9 位
-    用法：如下
-```js
-_random() // 170887923
-_random(10) // 1213178809
-```
-
-#### _formattingTime
+#### _format
     功能：时间格式化
     参数：{
         time: 需要被格式化的时间(支持格式为 时间戳和'2021-04-26 16:00:00', '2021/04/26 16:00:00')
@@ -98,3 +74,5 @@ v_file(file, 'image', { size: 10, units: 'MB' })
 }
 ```
 
+
+##### <a name="divtop">时间格式化<a>

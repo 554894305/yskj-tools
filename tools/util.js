@@ -63,23 +63,6 @@ export function _query(paraName) {
         return ''
     }
 }
-
-/*
- *描述: 性别映射
- *作者: xiehuan
- *参数: {
-    str: 后端返回的表示性别的值
- }
- *Date: 2021-04-26 14:41:50
-*/
-export function _sex(str) {
-    if (typeof str === 'string') {
-        return str === 'female' ? '女' : str === 'male' ? '男' : '--'
-    } else if (typeof str === 'number') {
-        return str === 0 ? '女' : str === 1 ? '男' : '--'
-    }
-}
-
 /*
  *描述: 生成大位随机数
  *作者: xiehuan
@@ -101,7 +84,7 @@ export function _random(num = 9) {
  }
  *Date: 2021-04-26 15:07:04
 */
-export function _formattingTime(time, format = 'MM-DD') {
+export function _format(time, format = 'MM-DD') {
     let date = new Date(time)
     var YY = date.getFullYear() //获取当前年份
     var MM = date.getMonth() + 1 //获取当前月份

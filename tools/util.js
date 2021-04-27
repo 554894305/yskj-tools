@@ -17,18 +17,23 @@ export function _throttle(fn, interval) {
 /**
  * 数据防抖
  */
- let timer
- export function _debounce(fn, interval) {
-     let gapTime = interval || 800
-     clearTimeout(timer)
-     timer = setTimeout(function() {
-         fn()
-     }, gapTime)
- }
+let timer
+export function _debounce(fn, interval) {
+    let gapTime = interval || 800
+    clearTimeout(timer)
+    timer = setTimeout(function() {
+        fn()
+    }, gapTime)
+}
 
- /**
-  * 截取字符串
-  */
+/*
+ *描述: 截取字符串
+ *作者: xiehuan
+ *参数: {
+    paraName：URL参数的键名
+ }
+ *Date: 2021-04-26 14:32:10
+*/
 export function _query(paraName) {
     let url = decodeURIComponent(document.location.toString())
     let arrObj = url.split('?')
@@ -59,9 +64,14 @@ export function _query(paraName) {
     }
 }
 
-/** 
- * 性别映射
- */
+/*
+ *描述: 性别映射
+ *作者: xiehuan
+ *参数: {
+    str: 后端返回的表示性别的值
+ }
+ *Date: 2021-04-26 14:41:50
+*/
 export function _sex(str) {
     if (typeof str === 'string') {
         return str === 'female' ? '女' : str === 'male' ? '男' : '--'
@@ -70,20 +80,28 @@ export function _sex(str) {
     }
 }
 
-/**
- * 生成大位随机数
- */
+/*
+ *描述: 生成大位随机数
+ *作者: xiehuan
+ *参数: {
+     num: 大于 1 的整数，需要几位数的随机数就传入几，默认为 9 位
+ }
+ *Date: 2021-04-26 15:02:46
+*/
 export function _random(num = 9) {
     return Math.floor(Math.random() * Math.pow(10, num-1) + Math.pow(10, num-1))
 }
 
-/**
- * 时间格式化 
- * format: 默认值为 'MM-DD'，返回值例如：04-25；
- *         'MM-DD hh:mm' => 04-25 17:43
- *         'week' => 0 (周日)
- */
- export function _formattingTime(time, format = 'MM-DD') {
+/*
+ *描述: 时间格式化
+ *作者: xiehuan
+ *参数: {
+    time: 需要被格式化的时间
+    format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07   'week' => 1 (0 表示星期天， 1表示星期一，······)
+ }
+ *Date: 2021-04-26 15:07:04
+*/
+export function _formattingTime(time, format = 'MM-DD') {
     let date = new Date(time)
     var YY = date.getFullYear() //获取当前年份
     var MM = date.getMonth() + 1 //获取当前月份
@@ -108,12 +126,16 @@ export function _random(num = 9) {
     }
 }
 
-/**
- * 数组去重
- */
-export function _unique(data) {
-    let arr = new Set(data)
-    return [...arr]
+/*
+ *描述: 数组去重
+ *作者: xiehuan
+ *参数: {
+    arr: 一个数组
+ }
+ *Date: 2021-04-26 15:13:05
+*/
+export function _unique(arr) {
+    return [...new Set(arr)]
 }
 
 /*

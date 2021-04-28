@@ -6,6 +6,16 @@
     1. 修改p_tenantId方法默认不传递请求方式，没有给默认值bug
 ###### 更新说明(V1.0.4)
     1. 开放出来的第一个版本
+
+### 快捷使用
+```
+将方法全部注册到vue的原型链上，之后可以使用this来调用
+
+import tools from 'yskj-tools'
+for (const keys of Object.keys(tools)) {
+    Vue.prototype[keys] = tools[keys]
+}
+```
 #### 基础工具类方法
 | 方法名|方法说明|
 |-|:-:|

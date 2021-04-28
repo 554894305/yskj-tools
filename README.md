@@ -1,4 +1,7 @@
-#### 最新版本 V1.0.5
+#### 最新版本 V1.0.6
+###### 更新说明(V1.0.6)
+    1. 修复解密方法（p_decryToken）bug
+    2. 新增智慧校园子系统初始化Vue之前的操作集合p_initVue()
 ###### 更新说明(V1.0.5)
     1. 修改p_tenantId方法默认不传递请求方式，没有给默认值bug
 ###### 更新说明(V1.0.4)
@@ -17,6 +20,7 @@
 | p_tenantId| [获取租户Id](#tenant)
 | p_encryToken| [token加密](#encry)
 | p_decryToken| token解密
+| p_initVue| [智慧校园子系统初始化Vue之前的操作](#initVue)
 
 #### 表单验证类方法
 | 方法名|方法说明|
@@ -107,7 +111,7 @@ p_tenantId({
 }).then((res) => {}).catch((err) => {})
 ```
 
-##### <a name="tenant">token加/解密</a>
+##### <a name="encry">token加/解密</a>
 ```
 参数: {
     baseUrl: 基础请求地址
@@ -116,6 +120,24 @@ p_tenantId({
 }
 
 p_encryToken({
+    baseUrl: 'xxxx',
+    token: 'xxxx'
+}).then((res) => {}).catch((err) => {})
+```
+
+##### <a name="initVue">智慧校园子系统统一初始化前的操作</a>
+```
+参数: {
+    baseUrl: 基础请求地址，
+    url: token解密接口, 默认不传递，
+    token: 用户加密令牌
+}
+
+返回参数 {
+    解密过后的token值
+}
+
+p_initVue({
     baseUrl: 'xxxx',
     token: 'xxxx'
 }).then((res) => {}).catch((err) => {})

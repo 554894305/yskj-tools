@@ -1,4 +1,6 @@
-#### 最新版本 V1.0.6
+#### 最新版本 V1.0.7
+###### 更新说明(V1.0.7)
+    1. 新增基础工具类方法: 去掉Url中的某个参数_urlDel('aa')
 ###### 更新说明(V1.0.6)
     1. 修复解密方法（p_decryToken）bug
     2. 新增智慧校园子系统初始化Vue之前的操作集合p_initVue()
@@ -23,6 +25,7 @@ for (const keys of Object.keys(tools)) {
 | _random| 生成大位随机数
 | _format| [时间格式化](#format)
 | _unique| [数组去重](#unique)
+| _urlDel| 去掉Url中的某个参数,参数为需要去除掉的key
 
 #### 异步工具类方法
 | 方法名|方法说明|

@@ -143,3 +143,33 @@ export function _getDomain() {
     }
     return domain
 }
+
+/*
+ *描述: 去掉Url中的某个参数
+ *作者: liuqing
+ *参数: {
+    name: 需要截取掉的字段名 
+ }
+ *Date: 2021-04-28 15:11:03
+*/
+export function _urlDel(name){
+    let url = window.location.href
+    let urlArr = url.split('?')
+    if(urlArr.length > 1 && urlArr[1].indexOf(name) > -1){
+        let query = urlArr[1]
+        let obj = {}
+        let arr = query.split("&");
+        for (let i = 0; i < arr.length; i++) {
+            arr[i] = arr[i].split("=")
+            obj[arr[i][0]] = arr[i][1]
+        };
+        delete obj[name];
+        let urlte = urlArr[0] +'?'+ JSON.stringify(obj).replace(/[\"\{\}]/g,"").replace(/\:/g,"=").replace(/\,/g,"&")
+        if(!urlte.split('?')[1]) {
+            urlte =  urlte.split('?')[0]
+        }
+        return urlte
+    }else{
+        return url
+    }
+}

@@ -85,9 +85,9 @@ export function _random(num = 9) {
 */
 export function _sex(sex) {
     if (typeof sex === 'string') {
-        return sex === 'female' ? '女' : sex === 'male' ? '男' : '请传入female或male'
+        return sex === 'female' ? '女' : sex === 'male' ? '男' : sex === 'unknown' ? '未知' : '请传入 male 或 female 或 unknown'
     } else if (typeof sex === 'number') {
-        return sex === 0 ? '女' : sex === 1 ? '男' : '请传入0或1'
+        return sex === 0 ? '男' : sex === 1 ? '女' : sex === 5 ? '未知' : '请传入 0 或 1 或 5'
     }
 }
 

@@ -28,7 +28,7 @@ for (const keys of Object.keys(tools)) {
 | _format| [时间格式化](#format)
 | _unique| [数组去重](#unique)
 | _urlDel| 去掉Url中的某个参数,参数为需要去除掉的key
-| _sex| 性别映射
+| _sex| [性别映射](#sex)
 
 #### 异步工具类方法
 | 方法名|方法说明|

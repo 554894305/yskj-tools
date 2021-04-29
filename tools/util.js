@@ -76,6 +76,22 @@ export function _random(num = 9) {
 }
 
 /*
+ *描述: 性别映射
+ *作者: xiehuan
+ *参数: {
+     sex: 后端返回的值
+ }
+ *Date: 2021-04-29 15:13:49
+*/
+export function _sex(sex) {
+    if (typeof sex === 'string') {
+        return sex === 'female' ? '女' : sex === 'male' ? '男' : '请传入female或male'
+    } else if (typeof sex === 'number') {
+        return sex === 0 ? '女' : sex === 1 ? '男' : '请传入0或1'
+    }
+}
+
+/*
  *描述: 时间格式化
  *作者: xiehuan
  *参数: {

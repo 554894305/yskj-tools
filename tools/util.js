@@ -79,7 +79,7 @@ export function _random(num = 9) {
  *描述: 性别映射
  *作者: xiehuan
  *参数: {
-     sex: 后端返回的值
+     sex: 后端返回的表示性别的值
  }
  *Date: 2021-04-29 15:13:49
 */

@@ -155,3 +155,15 @@ p_initVue({
     token: 'xxxx'
 }).then((res) => {}).catch((err) => {})
 ```
+
+##### <a name="sex">性别映射</a>
+```js
+参数: {
+    sex: 后端返回的表示性别的值
+}
+
+_sex(0) // 女
+_sex(1) // 男
+_sex('female') // 女
+_sex('male') // 男
+```

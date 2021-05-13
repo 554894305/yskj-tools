@@ -24,19 +24,32 @@ function print(data, flag) {
     return obj
 }
 
-function p_fetch(url, method, body, headers) {
+export function p_fetch(url, method, body, headers) {
     return new Promise(async (resolve, reject) => {
-        let req
-        if(method === 'GET') {
-            req = new Request(url, {method, headers})
+        if(_environ() === 'miniapp') {
+            uni.request({
+                url,
+				method,
+                data: body,
+                header: headers,
+                success (res) {
+                    resolve(res.data)
+                }
+            })
         }else {
-            req = new Request(url, {method, body, headers})
+            let req
+            if(method === 'GET') {
+                req = new Request(url, {method, headers})
+            }else {
+                req = new Request(url, {method, body, headers})
+            }
+            const data = await fetch(req)
+            const responseJson = await data.json()
+            resolve(responseJson)
         }
-        const data = await fetch(req)
-        const responseJson = await data.json()
-        resolve(responseJson)
     })
 }
+
 
 /*
  *描述: 获取租户Id
@@ -156,12 +169,11 @@ export function p_initVue({
         }
     })
 }
-
 /*
  *描述: 上传文件通用方法：
- *      1. 支持图片压缩 注：只有图片才有压缩功能
- *      2. 多文件上传
- *      3. 小程序，web通用
+ *      1. 多文件上传 
+ *      2. 图片压缩功能 ^1.2.1 注：小程序压缩请使用wx.chooseImage自带的压缩功能
+ *      3. 小程序，Web通用
  *作者: liuqing
  *参数: {
     files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
@@ -179,12 +191,16 @@ export function p_initVue({
  }
  *Date: 2021-05-12 13:51:50
 */
-export function p_uploadFile({files, options}) {
+export function p_uploadFile(files, options) {
     !options.openCompress && (options.openCompress = false)
-    if(options.openCompress) {
-        !options.uploadUrl && (options.uploadUrl = 'alpha/upload_scale_file.do')
-    }else {
+    if(_environ() === 'miniapp') {
         !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
+    }else {
+        if(options.openCompress) {
+            !options.uploadUrl && (options.uploadUrl = 'alpha/upload_base64_file.do')
+        }else {
+            !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
+        }
     }
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
     !options.width && (options.width = 500)
@@ -216,42 +232,64 @@ export function p_uploadFile({files, options}) {
         })
         if(api1.success) {
             let arr = []
-            for (let i = 0; i < files.length; i++) {
-                let formData = new FormData()
-                formData.append('file', files[i])
-                let img = document.createElement('img')
-                let reader = new FileReader()
-                reader.readAsDataURL(files[i])
-                reader.onload = function(e) {
-                    let naturalBase64 = e.target.result
-                    img.src = naturalBase64
-                    img.onload = async function () {
-                        let ratio = img.naturalWidth / img.naturalHeight
-                        let width = options.width
-                        let height = width / ratio
-                        let api2
-                        if(options.openCompress) {
-                            api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?width=${width}&height=${height}`, 'POST', formData, {
-                                token: api1.data
-                            })
-                            try{
-                                if(api2.success) {
-                                    arr.push(api2.data.scalePath)
+            if(_environ() === 'miniapp') {
+                for (let i = 0; i < files.length; i++) {
+                    uni.uploadFile({
+                        url: `${options.uploadBaseUrl}/${options.uploadUrl}`,
+                        filePath: files[i],
+                        name: 'file',
+                        header: {
+                            token: api1.data
+                        },
+                        success (res){
+							let data = JSON.parse(res.data)
+                            arr.push(data.data)
+                        }
+                    })
+                }
+            }else {
+                for (let i = 0; i < files.length; i++) {
+                    if(options.openCompress) {
+                        let img = document.createElement('img')
+                        let cvs = document.createElement('canvas')
+                        let reader = new FileReader()
+                        reader.readAsDataURL(files[i])
+                        reader.onload = function(e) {
+                            let naturalBase64 = e.target.result
+                            img.src = naturalBase64
+                            img.onload = async function () {
+                                let ratio = img.naturalWidth / img.naturalHeight
+                                let width = options.width
+                                let height = width / ratio
+                                cvs.width = width
+                                cvs.height = height
+                                let ctx = cvs.getContext('2d')
+                                ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
+                                let zipBase64 = cvs.toDataURL()
+                                const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', zipBase64, {
+                                    token: api1.data
+                                })
+                                try{
+                                    if(api2.success) {
+                                        arr.push(api2.data)
+                                    }
+                                }catch(e){
+                                    arr.push('')
                                 }
-                            }catch(e){
-                                arr.push('')
                             }
-                        }else {
-                            api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
-                                token: api1.data
-                            })
-                            try{
-                                if(api2.success) {
-                                    arr.push(api2.data)
-                                }
-                            }catch(e){
-                                arr.push('')
+                        }
+                    }else {
+                        let formData = new FormData()
+                        formData.append('file', files[i])
+                        const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
+                            token: api1.data
+                        })
+                        try{
+                            if(api2.success) {
+                                arr.push(api2.data)
                             }
+                        }catch(e){
+                            arr.push('')
                         }
                     }
                 }

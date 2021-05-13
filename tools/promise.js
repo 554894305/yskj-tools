@@ -1,7 +1,43 @@
 import {
     _query,
-    _getDomain
+    _getDomain,
+    _environ
 } from './util'
+
+function print(data, flag) {
+    let obj
+    if(flag) {
+        obj = {
+            code: 0,
+            success: true,
+            data,
+            msg: 'ok'
+        }
+    }else {
+        obj = {
+            code: 500,
+            success: false,
+            data: null,
+            msg: data
+        }
+    }
+    return obj
+}
+
+function p_fetch(url, method, body, headers) {
+    return new Promise(async (resolve, reject) => {
+        let req
+        if(method === 'GET') {
+            req = new Request(url, {method, headers})
+        }else {
+            req = new Request(url, {method, body, headers})
+        }
+        const data = await fetch(req)
+        const responseJson = await data.json()
+        resolve(responseJson)
+    })
+}
+
 /*
  *描述: 获取租户Id
  *作者: liuqing
@@ -117,6 +153,82 @@ export function p_initVue({
             }
         } catch (error) {
             reject(error)
+        }
+    })
+}
+
+/*
+ *描述: 上传文件通用方法：
+ *      1. 支持图片压缩
+ *      2. 多文件上传
+ *      3. 小程序，web通用
+ *作者: liuqing
+ *参数: {
+    files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
+    options(obj): {
+        token(*String)
+        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
+        uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
+        uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
+        tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
+        maxLength(Number): 最大上传文件个数，默认为9
+        openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
+    }
+ }
+ *Date: 2021-05-12 13:51:50
+*/
+export function p_uploadFile({files, options}) {
+    !options.uploadUrl && (options.uploadUrl = 'fileapi/alpha/upload_file.do')
+    !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
+    !options.maxLength && (options.maxLength = 9)
+    return new Promise(async (resolve, reject) => {
+        // 基本入参验证
+        if(!files.length) {
+            resolve(print('至少上传一项', false))
+            return
+        }
+        if(!options.baseUrl) {
+            resolve(print('应用的基本请求地址未传-baseUrl', false))
+            return
+        }
+        if(!options.uploadBaseUrl) {
+            resolve(print('文件上传基本请求地址未传-uploadBaseUrl', false))
+            return
+        }
+        if(!options.token) {
+            resolve(print('token未传', false))
+            return
+        }
+        if(files.length > options.maxLength) {
+            resolve(print('超出最大上传个数-' + options.maxLength, false))
+            return
+        }
+        
+        // 是否开启压缩功能
+        if(options.openCompress) {
+            //
+        }
+        
+        const api1 = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
+            Authorization: `Bearer ${options.token}`
+        })
+        if(api1.success) {
+            let arr = []
+            for (let i = 0; i < files.length; i++) {
+                let formData = new FormData()
+                formData.append('file', files[i])
+                const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
+                    token: api1.data
+                })
+                try{
+                    if(api2.success) {
+                        arr.push(api2.data)
+                    }
+                }catch(e){
+                    arr.push('')
+                }
+            }
+            resolve(print(arr, true))
         }
     })
 }

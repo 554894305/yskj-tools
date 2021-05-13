@@ -96,8 +96,9 @@ export function _sex(sex) {
  *作者: xiehuan
  *参数: {
     time: 需要被格式化的时间
-    format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07   'week' => 1 (0 表示星期天， 1表示星期一，······)
-        'y' => 2021     'm' => 04   'd' => 26
+    format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07  'YY-MM-DD hh:mm:ss' 'YY-MM-DD'  'MM-DD' 'hh-mm'
+        'y' => 2021     'm' => 04   'd' => 26   
+        'week' => 1 (0 表示星期天， 1表示星期一，······)
  }
  *Date: 2021-04-26 15:07:04
 */

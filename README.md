@@ -156,7 +156,7 @@ p_initVue({
 ```
 
 ##### <a name="sex">性别映射</a>
-```js
+```
 参数: {
     sex: 后端返回的表示性别的值
 }
@@ -180,11 +180,11 @@ _sex('unknown') // 未知
 ```
 
 ##### <a name="uploadFile">文件上传</a>
-```js
+```
 支持：
-    1. 多文件上传 <font color='red'> *V1.2.0 </font>
+    1. 多文件上传
 
-<font color='red'> `*  注意：地址不要以斜杠开头！！！` </font>
+注意：地址不要以斜杠开头！！！
 参数: {
     files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
     options(obj): {

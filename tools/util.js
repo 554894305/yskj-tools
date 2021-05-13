@@ -97,10 +97,16 @@ export function _sex(sex) {
  *参数: {
     time: 需要被格式化的时间
     format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07   'week' => 1 (0 表示星期天， 1表示星期一，······)
+        'y' => 2021     'm' => 04   'd' => 26
  }
  *Date: 2021-04-26 15:07:04
 */
 export function _format(time, format = 'MM-DD') {
+    if (typeof time === 'number') {
+        if (String(time).length === 10) {
+            time = time * 1000
+        }
+    }
     let date = new Date(time)
     var YY = date.getFullYear() //获取当前年份
     var MM = date.getMonth() + 1 //获取当前月份
@@ -116,12 +122,24 @@ export function _format(time, format = 'MM-DD') {
     mm = mm < 10 ? '0' + mm : mm
     ss = ss < 10 ? '0' + ss : ss
 
-    if (format === 'MM-DD hh:mm') {
+    if (format === 'YY-MM-DD hh:mm:ss') {
+        return YY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm + ':' + ss
+    } else if (format === 'MM-DD hh:mm') {
         return MM + '-' + DD + ' ' + hh + ':' + mm
+    } else if (format === 'YY-MM-DD') {
+        return YY + '-' + MM + '-' + DD
     } else if (format === 'MM-DD') {
         return MM + '-' + DD
+    } else if (format === 'hh-mm') {
+        return hh + ':' + mm
     } else if (format === 'week') {
         return week
+    }else if (format === 'y') {
+        return YY
+    } else if (format === 'm') {
+        return MM
+    } else if (format === 'd') {
+        return DD
     }
 }
 

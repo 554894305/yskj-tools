@@ -159,14 +159,16 @@ export function p_initVue({
 
 /*
  *描述: 上传文件通用方法：
- *      1. 支持图片压缩
+ *      1. 支持图片压缩 注：只有图片才有压缩功能
  *      2. 多文件上传
  *      3. 小程序，web通用
  *作者: liuqing
  *参数: {
     files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
     options(obj): {
+        fileType(String): 文件类型，可选值：base64(暂时不支持)、file(默认)
         token(*String)
+        width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
         uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
@@ -178,8 +180,14 @@ export function p_initVue({
  *Date: 2021-05-12 13:51:50
 */
 export function p_uploadFile({files, options}) {
-    !options.uploadUrl && (options.uploadUrl = 'fileapi/alpha/upload_file.do')
+    !options.openCompress && (options.openCompress = false)
+    if(options.openCompress) {
+        !options.uploadUrl && (options.uploadUrl = 'alpha/upload_scale_file.do')
+    }else {
+        !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
+    }
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
+    !options.width && (options.width = 500)
     !options.maxLength && (options.maxLength = 9)
     return new Promise(async (resolve, reject) => {
         // 基本入参验证
@@ -203,12 +211,6 @@ export function p_uploadFile({files, options}) {
             resolve(print('超出最大上传个数-' + options.maxLength, false))
             return
         }
-        
-        // 是否开启压缩功能
-        if(options.openCompress) {
-            //
-        }
-        
         const api1 = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
             Authorization: `Bearer ${options.token}`
         })
@@ -217,15 +219,41 @@ export function p_uploadFile({files, options}) {
             for (let i = 0; i < files.length; i++) {
                 let formData = new FormData()
                 formData.append('file', files[i])
-                const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
-                    token: api1.data
-                })
-                try{
-                    if(api2.success) {
-                        arr.push(api2.data)
+                let img = document.createElement('img')
+                let reader = new FileReader()
+                reader.readAsDataURL(files[i])
+                reader.onload = function(e) {
+                    let naturalBase64 = e.target.result
+                    img.src = naturalBase64
+                    img.onload = async function () {
+                        let ratio = img.naturalWidth / img.naturalHeight
+                        let width = options.width
+                        let height = width / ratio
+                        let api2
+                        if(options.openCompress) {
+                            api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?width=${width}&height=${height}`, 'POST', formData, {
+                                token: api1.data
+                            })
+                            try{
+                                if(api2.success) {
+                                    arr.push(api2.data.scalePath)
+                                }
+                            }catch(e){
+                                arr.push('')
+                            }
+                        }else {
+                            api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
+                                token: api1.data
+                            })
+                            try{
+                                if(api2.success) {
+                                    arr.push(api2.data)
+                                }
+                            }catch(e){
+                                arr.push('')
+                            }
+                        }
                     }
-                }catch(e){
-                    arr.push('')
                 }
             }
             resolve(print(arr, true))

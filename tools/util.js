@@ -189,3 +189,30 @@ export function _urlDel(name){
         return url
     }
 }
+
+/*
+ *描述: 判断当前所处的环境
+ *作者: liuqing
+ *参数: {}
+ *Date: 2021-05-13 09:22:43
+*/
+export function _environ() {
+    if(window) {
+        let ua = window.navigator.userAgent
+        if (/miniProgram/i.test(ua)) {
+            // 微信小程序
+            return 'miniapp'
+        } else if (/micromessenger/i.test(ua)) {
+            // 微信
+            return 'wx'
+        } else if (/alipayclient/i.test(ua)) {
+            // 支付宝
+            return 'ali'
+        } else {
+            // 浏览器
+            return 'browser'
+        }
+    }else {
+        return 'miniapp'
+    }
+}

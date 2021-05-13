@@ -1,4 +1,7 @@
-#### 最新版本 V1.1.0
+#### 最新版本 V1.2.0
+###### 更新说明(V1.2.0)
+    1. 新增_environ(判断当前所处的环境)基础函数
+    2. 新增p_uploadFile(上传文件通用方法)
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -20,6 +23,7 @@ for (const keys of Object.keys(tools)) {
 | _unique| [数组去重](#unique)
 | _urlDel| 去掉Url中的某个参数,参数为需要去除掉的key
 | _sex| [性别映射](#sex)
+| _environ| [判断当前所处的环境](#environ)
 
 #### 异步工具类方法
 | 方法名|方法说明|
@@ -28,6 +32,7 @@ for (const keys of Object.keys(tools)) {
 | p_encryToken| [token加密](#encry)
 | p_decryToken| token解密
 | p_initVue| [智慧校园子系统初始化Vue之前的操作](#initVue)
+| p_uploadFile| [文件上传](#uploadFile)
 
 #### 表单验证类方法
 | 方法名|方法说明|
@@ -162,4 +167,39 @@ _sex(5) // 未知
 _sex('female') // 女
 _sex('male') // 男
 _sex('unknown') // 未知
+```
+
+##### <a name="environ">判断当前所处的环境</a>
+```
+    返回值为：{
+        miniapp： 微信小程序中，
+        wx: 微信浏览器中
+        ali: 支付宝浏览器中
+        browser： 普通浏览器
+    }
+```
+
+##### <a name="uploadFile">文件上传</a>
+```js
+支持：
+    1. 多文件上传 <font color='red'> *V1.2.0 </font>
+
+<font color='red'> `*  注意：地址不要以斜杠开头！！！` </font>
+参数: {
+    files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
+    options(obj): {
+        token(*String)
+        baseUrl(*String): 应用的基本地址
+        uploadBaseUrl(*String)：上传的api基本地址
+        uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'
+        tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'
+        maxLength(Number): 最大上传文件个数，默认为9
+        openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
+    }
+}
+
+p_uploadFile({
+    files: [],
+    options: {}
+}).then((res) => {}).catch((err) => {})
 ```

@@ -210,8 +210,5 @@ _sex('unknown') // 未知
     }
 }
 
-p_uploadFile({
-    files: [],
-    options: {}
-}).then((res) => {}).catch((err) => {})
+p_uploadFile([],{}).then((res) => {}).catch((err) => {})
 ```

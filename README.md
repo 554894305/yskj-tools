@@ -200,13 +200,13 @@ _sex('unknown') // 未知
     options(obj): {
         fileType(String): 文件类型，可选值：base64(暂时不支持)、file(默认)
         token(*String)
-        width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
         uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
         tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
         maxLength(Number): 最大上传文件个数，默认为9
         openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
+        width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
     }
 }
 

@@ -1,11 +1,12 @@
-#### 最新版本 V1.2.2
+#### 最新版本 V1.2.3
  
 ###### 更新说明(V1.2.x)
-    1. 新增_environ(判断当前所处的环境)基础函数
-    2. 新增p_uploadFile(上传文件)
-    3. 扩展_format兼容性
-    4. 新增p_uploadFile图片压缩功能 ^1.2.1
-    5. p_uploadFile图片压缩改为前端处理 ^1.2.2
+    新增_environ(判断当前所处的环境)基础函数
+    新增p_uploadFile(上传文件)
+    新增v_idCard（身份证校验）方法
+    扩展_format兼容性
+    新增p_uploadFile图片压缩功能
+    p_uploadFile图片压缩改为前端处理
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -44,6 +45,7 @@ for (const keys of Object.keys(tools)) {
 | v_name| [中国大陆姓名验证](#name)
 | v_phone| [手机号码验证](#phone)
 | v_file| [表单验证](#file)
+| v_idCard| [身份证验证](#idCard)
 
 ##### <a name="format">时间格式化<a>
     功能：时间格式化
@@ -211,4 +213,3 @@ _sex('unknown') // 未知
 }
 
 p_uploadFile([],{}).then((res) => {}).catch((err) => {})
-```

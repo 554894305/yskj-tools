@@ -36,6 +36,24 @@ export function v_phone(phoneInput) {
 }
 
 /*
+ *描述: 身份证号码验证
+ *作者: duqining
+ *参数: {
+    idCardNum(String || Number): 用户输入的身份证号码
+ }
+ *Date: 2021-05-17 10:24:42
+*/
+export function v_idCard(idCardNum) {
+    idCardNum = Number(idCardNum)
+    let myreg = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+    if (!myreg.test(idCardNum)) {
+        return false
+    } else {
+        return true
+    }
+}
+
+/*
  *描述: 上传前校验文件是否合法
  *作者: xiehuan
  *参数: {

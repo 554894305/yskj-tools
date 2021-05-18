@@ -141,16 +141,20 @@ export function p_decryToken({
  *描述: 智慧校园子系统统一初始化前的操作
  *作者: liuqing
  *参数: {
-    baseUrl: 基础请求地址，
-    url: token加/解密接口, 默认不传递，
-    token: 用户加密令牌
+    baseUrl（*String）: 基础请求地址，
+    url（String）: token加/解密接口, 默认不传递，
+    token（*String）: 用户加密令牌，
+    getInfo（Boolean），是否获取用户信息，默认为false
+    infoUrl（String）：用户信息接口地址，有默认值
  }
  *Date: 2021-04-28 10:51:28
 */
 export function p_initVue({
     baseUrl = '',
     url = 'base/api/auth/swap/token/byonce',
-    token = ''
+    token = '',
+    getInfo = false,
+    infoUrl = 'base/api/auth/user/current/detail'
 }) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -160,12 +164,29 @@ export function p_initVue({
                 token
             })
             if(data.success) {
-                resolve(data.data.accessToken)
+                if(getInfo) {
+                    p_fetch(`${baseUrl}/${infoUrl}`, 'GET', {}, {
+                        'Authorization': 'Bearer ' + data.data.accessToken
+                    }).then((res) => {
+                        if(res.success) {
+                            resolve(print({
+                                token: data.data.accessToken,
+                                userInfo: res.data
+                            }, true))
+                        }
+                    }).catch((err) => {
+                        reject(print(err, false))
+                    })
+                }else {
+                    resolve(print({
+                        token: data.data.accessToken
+                    }, true))
+                }
             }else {
-                reject(data)
+                reject(print(data, false))
             }
         } catch (error) {
-            reject(error)
+            reject(print(error, false))
         }
     })
 }

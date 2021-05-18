@@ -1,4 +1,4 @@
-#### 最新版本 V1.2.3
+#### 最新版本 V1.2.4
  
 ###### 更新说明(V1.2.x)
     新增_environ(判断当前所处的环境)基础函数
@@ -7,6 +7,7 @@
     扩展_format兼容性
     新增p_uploadFile图片压缩功能
     p_uploadFile图片压缩改为前端处理
+    优化p_initVue方法，支持直接获取用户信息
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -151,13 +152,11 @@ p_encryToken({
 ##### <a name="initVue">智慧校园子系统统一初始化前的操作</a>
 ```
 参数: {
-    baseUrl: 基础请求地址，
-    url: token解密接口, 默认不传递，
-    token: 用户加密令牌
-}
-
-返回参数 {
-    解密过后的token值
+    baseUrl（*String）: 基础请求地址，
+    url（String）: token加/解密接口, 默认不传递，
+    token（*String）: 用户加密令牌，
+    getInfo（Boolean），是否获取用户信息，默认为false
+    infoUrl（String）：用户信息接口地址，有默认值
 }
 
 p_initVue({

@@ -251,6 +251,8 @@ export function p_uploadFile(files, options) {
         const api1 = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
             Authorization: `Bearer ${options.token}`
         })
+        let timer = null
+		let count = 0
         if(api1.success) {
             let arr = []
             if(_environ() === 'miniapp') {
@@ -264,8 +266,20 @@ export function p_uploadFile(files, options) {
                         },
                         success (res){
 							let data = JSON.parse(res.data)
-                            arr.push(data.data)
-                        }
+                            arr.push({
+                                encryUrl: data.data,
+                                msg: 'ok'
+                            })
+                        },
+                        fail: (err) => {
+							arr.push({
+                                num: i + 1,
+                                msg: `上传失败，失败内容为第${i + 1}个`
+                            })
+						},
+						complete: () => {
+							count++
+						}
                     })
                 }
             }else {
@@ -292,10 +306,18 @@ export function p_uploadFile(files, options) {
                                 })
                                 try{
                                     if(api2.success) {
-                                        arr.push(api2.data)
+                                        count++
+                                        arr.push({
+                                            entryUrl: api2.data,
+                                            msg: 'ok'
+                                        })
                                     }
                                 }catch(e){
-                                    arr.push('')
+                                    count++
+                                    arr.push({
+                                        num: i + 1,
+                                        msg: `上传失败，失败内容为第${i + 1}个`
+                                    })
                                 }
                             }
                         }
@@ -307,15 +329,28 @@ export function p_uploadFile(files, options) {
                         })
                         try{
                             if(api2.success) {
-                                arr.push(api2.data)
+                                count++
+                                arr.push({
+                                    entryUrl: api2.data,
+                                    msg: 'ok'
+                                })
                             }
                         }catch(e){
-                            arr.push('')
+                            count++
+                            arr.push({
+                                num: i + 1,
+                                msg: `上传失败，失败内容为第${i + 1}个`
+                            })
                         }
                     }
                 }
             }
-            resolve(print(arr, true))
+            timer = setInterval(() => {
+				if(count > 0 && count === arr.length) {
+					clearInterval(timer)
+					resolve(print(arr, true))
+				}
+			}, 20)
         }
     })
 }

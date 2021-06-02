@@ -270,16 +270,15 @@ export function p_uploadFile(files, options) {
                                 encryUrl: data.data,
                                 msg: 'ok'
                             })
+                            count++
                         },
                         fail: (err) => {
 							arr.push({
                                 num: i + 1,
                                 msg: `上传失败，失败内容为第${i + 1}个`
                             })
+                            count++
 						},
-						complete: () => {
-							count++
-						}
                     })
                 }
             }else {
@@ -347,10 +346,10 @@ export function p_uploadFile(files, options) {
             }
             timer = setInterval(() => {
 				if(count > 0 && count === arr.length) {
-					clearInterval(timer)
 					resolve(print(arr, true))
+                    clearInterval(timer)
 				}
-			}, 20)
+			}, 200)
         }
     })
 }

@@ -1,4 +1,4 @@
-#### 最新版本 V1.2.8
+#### 最新版本 V1.2.9
  
 ###### 更新说明(V1.2.x)
     新增_environ(判断当前所处的环境)基础函数
@@ -11,6 +11,7 @@
     修复p_uploadFile方法多文件上传不能正确获取length问题。*1.2.5
     修复v_idCard方法bug，兼容身份证号码中有X的情况。 *1.2.6
     新增p_uploadFile返回解密过后的字段名 *1.2.8
+    修改_unique方法为：json数组去重 *1.2.9
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -29,7 +30,7 @@ for (const keys of Object.keys(tools)) {
 | _query| 截取URL参数值
 | _random| 生成大位随机数
 | _format| [时间格式化](#format)
-| _unique| [数组去重](#unique)
+| _unique| [JSON数组去重](#unique)
 | _urlDel| 去掉Url中的某个参数,参数为需要去除掉的key
 | _sex| [性别映射](#sex)
 | _environ| [判断当前所处的环境](#environ)
@@ -69,12 +70,16 @@ _format(new Date(), 'y') // 2021
 _format(new Date(), 'm') // 04
 _format(new Date(), 'y') // 26
 ```
-##### <a name="unique">数组去重</a>
-    功能：数组去重
-    参数：一个数组
+##### <a name="unique">json数组去重</a>
+    功能：json数组去重
+    参数： {
+        arr: json Array
+        key: 唯一的key名，根据此键名进行去重
+    }
     用法：如下
 ```js
-_unique([1,2,3,3,4,4,5]) // [1,2,3,4,5]
+var arr = [{id: 1, name: '11'}, {id: 1, name: '22'}]
+_unique(arr, 'id') // [{id: 1, name: '11'}]
 ```
 
 ##### <a name="name">中国大陆姓名验证</a>

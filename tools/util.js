@@ -145,15 +145,30 @@ export function _format(time, format = 'MM-DD') {
 }
 
 /*
- *描述: 数组去重
- *作者: xiehuan
+ *描述: json数组去重
+ *作者: xiehuan, *1.2.9修改：刘清
  *参数: {
-    arr: 一个数组
+    arr: json Array
+    key: 唯一的key名，根据此键名进行去重
  }
  *Date: 2021-04-26 15:13:05
 */
-export function _unique(arr) {
-    return [...new Set(arr)]
+export function _unique(arr, key) {
+    var result = [arr[0]]
+    for(var i = 1; i < arr.length; i++){
+        var item = arr[i]
+        var repeat = false
+        for (var j = 0; j < result.length; j++) {
+            if (item[key] == result[j][key]) {
+                repeat = true
+            break;
+        }
+    }
+    if (!repeat) {
+      result.push(item)
+    }
+  }
+  return result
 }
 
 /*

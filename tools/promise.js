@@ -205,6 +205,7 @@ export function p_initVue({
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
         uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
+        decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
         tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
         maxLength(Number): 最大上传文件个数，默认为9
         openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
@@ -212,6 +213,22 @@ export function p_initVue({
  }
  *Date: 2021-05-12 13:51:50
 */
+function getHttpUrl(url, token) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const url1 = await p_fetch(url, 'GET', {}, {
+                token
+            })
+            if(url1.success) {
+                resolve(url1.data)
+            }else {
+                reject('解密失败')
+            }
+        } catch (error) {
+            reject('解密失败')
+        }
+    })
+}
 export function p_uploadFile(files, options) {
     !options.openCompress && (options.openCompress = false)
     if(_environ() === 'miniapp') {
@@ -224,6 +241,7 @@ export function p_uploadFile(files, options) {
         }
     }
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
+    !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
     !options.width && (options.width = 500)
     !options.maxLength && (options.maxLength = 9)
     return new Promise(async (resolve, reject) => {
@@ -264,10 +282,11 @@ export function p_uploadFile(files, options) {
                         header: {
                             token: api1.data
                         },
-                        success (res){
+                        success: async (res) => {
 							let data = JSON.parse(res.data)
                             arr.push({
                                 encryUrl: data.data,
+                                decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${data.data}`, api1.data),
                                 msg: 'ok'
                             })
                             count++
@@ -307,7 +326,8 @@ export function p_uploadFile(files, options) {
                                     if(api2.success) {
                                         count++
                                         arr.push({
-                                            entryUrl: api2.data,
+                                            encryUrl: api2.data,
+                                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
                                             msg: 'ok'
                                         })
                                     }
@@ -330,7 +350,8 @@ export function p_uploadFile(files, options) {
                             if(api2.success) {
                                 count++
                                 arr.push({
-                                    entryUrl: api2.data,
+                                    encryUrl: api2.data,
+                                    decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
                                     msg: 'ok'
                                 })
                             }
@@ -349,7 +370,7 @@ export function p_uploadFile(files, options) {
 					resolve(print(arr, true))
                     clearInterval(timer)
 				}
-			}, 200)
+			}, 300)
         }
     })
 }

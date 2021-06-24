@@ -5,6 +5,7 @@ import {
 } from './util'
 
 function print(data, flag, options) {
+    !options && (options = {})
     let obj
     if(flag) {
         obj = {

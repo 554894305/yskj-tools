@@ -12,8 +12,10 @@ function print(data, flag, options) {
             code: 0,
             success: true,
             data,
-			...options,
             msg: 'ok'
+        }
+        for (const [key, value] of Object.entries(options)) {
+            obj[key] = value
         }
     }else {
         obj = {

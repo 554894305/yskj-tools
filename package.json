@@ -1,6 +1,6 @@
 {
   "name": "yskj-tools",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "元素科技前端公用tools库",
   "main": "index.js",
   "scripts": {
@@ -17,5 +17,8 @@
   "license": "ISC",
   "__npminstall_done": "Wed Apr 14 2021 15:36:17 GMT+0800 (GMT+08:00)",
   "_from": "yskj-tools@1.0.0",
-  "_resolved": "https://registry.npm.taobao.org/yskj-tools/download/yskj-tools-1.0.0.tgz"
+  "_resolved": "https://registry.npm.taobao.org/yskj-tools/download/yskj-tools-1.0.0.tgz",
+  "dependencies": {
+    "yskj-tools": "^1.2.11"
+  }
 }

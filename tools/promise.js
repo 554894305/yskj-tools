@@ -395,6 +395,12 @@ function uploadimg(api1, data, options, callback) {
     }
 }
 export function p_uploadFile(files, options) {
+    uploadimg_success = []
+    compressImageArr = []
+    failData = {
+        number: 0,
+        arr: []
+    }
     !options.openCompress && (options.openCompress = false)
 	!options.quality && (options.quality = 80)
     if(_environ() === 'miniapp') {

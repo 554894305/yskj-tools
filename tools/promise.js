@@ -106,7 +106,7 @@ export function p_tenantId({
 export function p_decryUrl(str, options) {
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
     !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (!str) {
             resolve(print('不能为空', false))
             return

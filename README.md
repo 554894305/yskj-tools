@@ -1,4 +1,4 @@
-#### 最新版本 V1.2.13
+#### 最新版本 V1.2.14
  
 ###### 更新说明(V1.2.x)
     新增_environ(判断当前所处的环境)基础函数
@@ -15,6 +15,7 @@
     修改p_uploadFile多文件上传bug *1.2.10
     修复print返回bug *1.2.12
     修复p_uploadFile方法bug *1.2.13
+    p_uploadFile方法支持base64上传文件 *1.2.14
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -210,7 +211,7 @@ _sex('unknown') // 未知
 参数: {
     files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
     options(obj): {
-        fileType(String): 文件类型，可选值：base64(暂时不支持)、file(默认)
+        fileType(String): 文件类型，可选值：base64、file(默认)
         token(*String)
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！

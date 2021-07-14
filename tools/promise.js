@@ -203,7 +203,7 @@ export function p_initVue({
  *参数: {
     files(Array): 图片集合(小程序是本地图片路径集合，Web是file对象集合)
     options(obj): {
-        fileType(String): 文件类型，可选值：base64(暂时不支持)、file(默认)
+        fileType(String): 文件类型，可选值：base64、file(默认)
         token(*String)
         width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
@@ -360,37 +360,71 @@ function uploadimg(api1, data, options, callback) {
         }else {
             let formData = new FormData()
             formData.append('file', data.files[i])
-            p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
-                token: api1.data
-            }).then(async (api2) => {
-                if(api2.success) {
-                    success++
-                    uploadimg_success.push({
-                        encryUrl: api2.data,
-                        decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
-                        msg: 'ok'
-                    })
-                }else {
+            if(options.fileType === 'file') {
+                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
+                    token: api1.data
+                }).then(async (api2) => {
+                    if(api2.success) {
+                        success++
+                        uploadimg_success.push({
+                            encryUrl: api2.data,
+                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                            msg: 'ok'
+                        })
+                    }else {
+                        fail++
+                        failData.arr.push(i) 
+                    }
+                }).catch(() => {
                     fail++
                     failData.arr.push(i) 
-                }
-            }).catch(() => {
-                fail++
-                failData.arr.push(i) 
-            }).finally(() => {
-                setTimeout(() => {
-                    i++
-                    if (i == data.files.length) {
-                        failData.number = fail
-                        callback(uploadimg_success, failData)
-                    } else {
-                        data.i = i
-                        data.success = success
-                        data.fail = fail
-                        uploadimg(api1, data, options,callback)
+                }).finally(() => {
+                    setTimeout(() => {
+                        i++
+                        if (i == data.files.length) {
+                            failData.number = fail
+                            callback(uploadimg_success, failData)
+                        } else {
+                            data.i = i
+                            data.success = success
+                            data.fail = fail
+                            uploadimg(api1, data, options,callback)
+                        }
+                    }, 200)
+                })
+            }else {
+                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', data.files[i], {
+                    token: api1.data
+                }).then(async (api2) => {
+                    if(api2.success) {
+                        success++
+                        uploadimg_success.push({
+                            encryUrl: api2.data,
+                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                            msg: 'ok'
+                        })
+                    }else {
+                        fail++
+                        failData.arr.push(i) 
                     }
-                }, 200)
-            })
+                }).catch(() => {
+                    fail++
+                    failData.arr.push(i) 
+                }).finally(() => {
+                    setTimeout(() => {
+                        i++
+                        if (i == data.files.length) {
+                            failData.number = fail
+                            callback(uploadimg_success, failData)
+                        } else {
+                            data.i = i
+                            data.success = success
+                            data.fail = fail
+                            uploadimg(api1, data, options,callback)
+                        }
+                    }, 200)
+                })
+            }
         }
     }
 }
@@ -406,13 +440,14 @@ export function p_uploadFile(files, options) {
     if(_environ() === 'miniapp') {
         !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
     }else {
-        if(options.openCompress) {
+        if(options.openCompress || options.fileType === 'base64') {
             !options.uploadUrl && (options.uploadUrl = 'alpha/upload_base64_file.do')
         }else {
             !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
         }
     }
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
+    !options.fileType && (options.fileType = 'file')
     !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
     !options.width && (options.width = 500)
     !options.maxLength && (options.maxLength = 9)
@@ -444,7 +479,6 @@ export function p_uploadFile(files, options) {
         if(api1.success) {
 			if(_environ() === 'miniapp') {
 				if(options.openCompress) {
-					console.log('files', files)
 					getCompressImage({files}, options, (newarr) => {
 						console.log('newarr', newarr)
 						uploadimg(api1, {files: newarr}, options, (arr, failData) => {

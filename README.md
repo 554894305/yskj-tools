@@ -1,4 +1,4 @@
-#### 最新版本 V1.2.14
+#### 最新版本 V1.2.15
  
 ###### 更新说明(V1.2.x)
     新增_environ(判断当前所处的环境)基础函数
@@ -16,6 +16,7 @@
     修复print返回bug *1.2.12
     修复p_uploadFile方法bug *1.2.13
     p_uploadFile方法支持base64上传文件 *1.2.14
+    新增文件解密方法p_decryUrl *1.2.15
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
@@ -47,6 +48,7 @@ for (const keys of Object.keys(tools)) {
 | p_decryToken| token解密
 | p_initVue| [智慧校园子系统初始化Vue之前的操作](#initVue)
 | p_uploadFile| [文件上传](#uploadFile)
+| p_decryUrl| [文件加密转解密](#decryUrl)
 
 #### 表单验证类方法
 | 方法名|方法说明|
@@ -224,3 +226,22 @@ _sex('unknown') // 未知
 }
 
 p_uploadFile([],{}).then((res) => {}).catch((err) => {})
+```
+
+##### <a name="decryUrl">文件加密转解密</a>
+```
+参数: {
+    str: 加密字符串
+    options{
+        token(*String)
+        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
+        uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
+        decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
+        tokenUrl(String): 上传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
+    }
+}
+
+p_decryUrl(str,{
+    xxx: xx
+}).then((res) => {})
+```

@@ -90,6 +90,51 @@ export function p_tenantId({
 }
 
 /*
+ *描述: 加密文件转解密
+ *作者: liuqing
+ *参数: 
+    str: 加密字符串
+    options{
+        token(*String)
+        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
+        uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
+        decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
+        tokenUrl(String): 上传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
+    }
+ *Date: 2021-07-14 17:11:08
+*/
+export function p_decryUrl(str, options) {
+    !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
+    !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
+    return new Promise((resolve, reject) => {
+        if (!str) {
+            resolve(print('不能为空', false))
+            return
+        }
+        if (str && str.substr(0, 4) == 'http') {
+            resolve(print({
+                url: str
+            }, true))
+            return
+        }
+        if(!options.token) {
+            resolve(print('token未传', false))
+            return
+        }
+        const token = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
+            Authorization: `Bearer ${options.token}`
+        })
+        if(token.success) {
+            getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${str}`, token.data).then((data) => {
+                resolve(print({
+                    url: data
+                }, true))
+            })
+        }
+    })
+}
+
+/*
  *描述: token加密
  *作者: liuqing
  *参数: {
@@ -210,7 +255,7 @@ export function p_initVue({
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
         uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
         decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
-        tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
+        tokenUrl(String): 上传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
         maxLength(Number): 最大上传文件个数，默认为9
         openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
     }

@@ -232,8 +232,9 @@ p_uploadFile([],{}).then((res) => {}).catch((err) => {})
 ##### <a name="decryUrl">文件加密转解密</a>
 ```
 参数: {
-    str: 加密字符串
+    decryData: 加密字符串/数组/json数组
     options{
+        key:(String): 加密字段的key值，如果是json数组，则key为必传项
         token(*String)
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
@@ -242,7 +243,7 @@ p_uploadFile([],{}).then((res) => {}).catch((err) => {})
     }
 }
 
-p_decryUrl(str,{
+p_decryUrl(decryData,{
     xxx: xx
 }).then((res) => {})
 ```

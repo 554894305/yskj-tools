@@ -93,8 +93,9 @@ export function p_tenantId({
  *描述: 加密文件转解密
  *作者: liuqing
  *参数: 
-    str: 加密字符串
+    decryData: 加密字符串/数组/json数组
     options{
+        key:(String): 加密字段的key值，如果是json数组，则key为必传项
         token(*String)
         baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
@@ -103,20 +104,46 @@ export function p_tenantId({
     }
  *Date: 2021-07-14 17:11:08
 */
-export function p_decryUrl(str, options) {
+let decryFunArr = []
+function decryFun(options, data, token, callback) {
+    let iii = data.iii ? data.iii : 0
+    getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${data.isObj ? data.files[iii][options.key] : data.files[iii]}`, token).then((url) => {
+        if(data.isObj) {
+            decryFunArr.push(Object.assign(data, {
+                decryUrl: url
+            }))
+        }else {
+            decryFunArr.push(url)
+        }
+        iii++
+        if (iii == data.files.length) {
+            if(data.isObj) {
+                decryFunArr.map(item => {
+                    item.files.map(file => {
+                        for (const [key, value] of Object.entries(file)) {
+                            item[key] = value
+                        }
+                    })
+                    setTimeout(() => {
+                        delete item.files
+                    },20)
+                    delete item.isObj
+                    delete item.iii
+                })
+            }
+		    setTimeout(() => {
+                callback(decryFunArr)
+            },200)
+		} else {
+		    data.iii = iii
+		    decryFun(options,data, token, callback)
+		}
+    })
+}
+export function p_decryUrl(decryData = '', options) {
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
     !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
     return new Promise(async (resolve, reject) => {
-        if (!str) {
-            resolve(print('不能为空', false))
-            return
-        }
-        if (str && str.substr(0, 4) == 'http') {
-            resolve(print({
-                url: str
-            }, true))
-            return
-        }
         if(!options.token) {
             resolve(print('token未传', false))
             return
@@ -125,12 +152,37 @@ export function p_decryUrl(str, options) {
             Authorization: `Bearer ${options.token}`
         })
         if(token.success) {
-            getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${str}`, token.data).then((data) => {
-                resolve(print({
-                    url: data
-                }, true))
-            })
-        }
+            if(Array.isArray(decryData)) {
+                decryFunArr = []
+                if(Object.prototype.toString.call(decryData[0]) === '[object Object]') {
+                    decryFun(options, {
+                        files: decryData,
+                        isObj: true,
+                    }, token.data, (arr) => {
+                        resolve(print(arr, true))
+                    })   
+                }else {
+                    decryFun(options, {
+                        files: decryData,
+                        isObj: false
+                    }, token.data, (arr) => {
+                        resolve(print(arr, true))
+                    }) 
+                }
+            }else {
+                if (decryData.substr(0, 4) == 'http') {
+                    resolve(print({
+                        url: decryData
+                    }, true))
+                    return
+                }
+                getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${decryData}`, token.data).then((data) => {
+                    resolve(print({
+                        url: data
+                    }, true))
+                })
+            }
+        } 
     })
 }
 

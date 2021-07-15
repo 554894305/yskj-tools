@@ -109,28 +109,16 @@ function decryFun(options, data, token, callback) {
     let iii = data.iii ? data.iii : 0
     getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${data.isObj ? data.files[iii][options.key] : data.files[iii]}`, token).then((url) => {
         if(data.isObj) {
-            decryFunArr.push(Object.assign(data, {
-                decryUrl: url
-            }))
+            let file = data.files[iii]
+            decryFunArr.push({
+                decryUrl: url,
+                ...file
+            })
         }else {
             decryFunArr.push(url)
         }
         iii++
         if (iii == data.files.length) {
-            if(data.isObj) {
-                decryFunArr.map(item => {
-                    item.files.map(file => {
-                        for (const [key, value] of Object.entries(file)) {
-                            item[key] = value
-                        }
-                    })
-                    setTimeout(() => {
-                        delete item.files
-                    },20)
-                    delete item.isObj
-                    delete item.iii
-                })
-            }
 		    setTimeout(() => {
                 callback(decryFunArr)
             },200)

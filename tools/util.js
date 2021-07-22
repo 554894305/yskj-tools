@@ -96,7 +96,7 @@ export function _sex(sex) {
  *作者: xiehuan
  *参数: {
     time: 需要被格式化的时间
-    format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07  'YY-MM-DD hh:mm:ss' 'YY-MM-DD'  'MM-DD' 'hh-mm'
+    format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07  'YY-MM-DD hh:mm:ss' 'YY-MM-DD'  'MM-DD' 'hh:mm:ss' 'hh:mm'
         'y' => 2021     'm' => 04   'd' => 26   
         'week' => 1 (0 表示星期天， 1表示星期一，······)
  }
@@ -107,6 +107,13 @@ export function _format(time, format = 'MM-DD') {
         if (String(time).length === 10) {
             time = time * 1000
         }
+    }
+    time = time.toLocaleString().replace(/\-/g, '/')
+    if (time.indexOf('下午') !== -1) {
+        time = time.replace(/下午/g, ' ')
+    }
+    if (time.indexOf('上午') !== -1) {
+        time = time.replace(/上午/g, ' ')
     }
     let date = new Date(time)
     var YY = date.getFullYear() //获取当前年份
@@ -125,13 +132,17 @@ export function _format(time, format = 'MM-DD') {
 
     if (format === 'YY-MM-DD hh:mm:ss') {
         return YY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm + ':' + ss
+    } else if (format === 'YY-MM-DD hh:mm') {
+        return YY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm
     } else if (format === 'MM-DD hh:mm') {
         return MM + '-' + DD + ' ' + hh + ':' + mm
     } else if (format === 'YY-MM-DD') {
         return YY + '-' + MM + '-' + DD
     } else if (format === 'MM-DD') {
         return MM + '-' + DD
-    } else if (format === 'hh-mm') {
+    } else if (format === 'hh:mm:ss') {
+        return hh + ':' + mm + ':' + ss
+    } else if (format === 'hh:mm') {
         return hh + ':' + mm
     } else if (format === 'week') {
         return week

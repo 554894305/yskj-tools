@@ -63,7 +63,7 @@ for (const keys of Object.keys(tools)) {
     功能：时间格式化
     参数：{
         time: 需要被格式化的时间(支持格式为 时间戳和'2021-04-26 16:00:00', '2021/04/26 16:00:00')
-        format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07  'YY-MM-DD hh:mm:ss' 'YY-MM-DD'  'MM-DD' 'hh-mm'
+        format：返回的时间格式，默认'MM-DD' => 04-26, 还支持'MM-DD hh:mm' => 04-26 15:07  'YY-MM-DD hh:mm:ss' 'YY-MM-DD'  'MM-DD' 'hh:mm:ss' 'hh:mm'
         'y' => 2021     'm' => 04   'd' => 26   
         'week' => 1 (0 表示星期天， 1表示星期一，······)
     }
@@ -75,7 +75,7 @@ _format(1619424033104, 'MM-DD hh:mm') // (1619424033104为时间戳) 04-26 16:01
 _format(1619424033104, 'week') // 1
 _format(new Date(), 'y') // 2021
 _format(new Date(), 'm') // 04
-_format(new Date(), 'y') // 26
+_format(new Date(), 'd') // 26
 ```
 ##### <a name="unique">json数组去重</a>
     功能：json数组去重

@@ -216,13 +216,19 @@ _sex('unknown') // 未知
     options(obj): {
         fileType(String): 文件类型，可选值：base64、file(默认)
         token(*String)
-        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
+        width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
+        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头结尾！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
-        uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
-        tokenUrl(String): 长传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
+        uploadUrl(String)：上传的api地址，      注意：不要以斜杠开头！！！
+                * 当文件类型为file时，默认为：'alpha/get_upload_url.do'，需要先调用此接口获取上传的临时地址
+                * 当文件类型为base64时，地址为： 'alpha/upload_base64_file.do'
+				* 小程序上传，默认地址为: 'alpha/get_upload_url_post.do'，需要先调用此接口获取上传的临时地址
+        decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
+        tokenUrl(String): 上传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
         maxLength(Number): 最大上传文件个数，默认为9
         openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
-        width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
+        filePath(String): 保存的文件名或者相对文件路径（不传时由服务器自动生成文件路径）
+        temp(Boolean)： 是否临时文件，默认为false，当为true时返回的地址以“/temp”开头。当filePath不为空时，此字段无效
     }
 }
 

@@ -343,14 +343,21 @@ let failData = {
 }
 function compressImage(src, quality) {
 	return new Promise((resolve) => {
+		let type = src.substr(src.indexOf(".") + 1)
 		uni.compressImage({
 			src,
 			quality,
 			success: (e) => {
-				resolve(e.tempFilePath)
+				resolve({
+					url: e.tempFilePath,
+					type: type
+				})
 			},
 			fail: () => {
-				resolve(src)
+				resolve({
+					url: src,
+					type: type
+				})
 			}
 		})
 	})
@@ -373,14 +380,23 @@ function uploadimg(api1, data, options, callback) {
 	let success = data.success ? data.success : 0
 	let fail = data.fail ? data.fail : 0
     if(_environ() === 'miniapp') {
-		let type = data.files[i].substr(data.files[i].indexOf(".") + 1)
+		let url = ''
+		let type = ''
+		if (options.openCompress) {
+			url = data.files[i].url
+			type = data.files[i].type
+		} else {
+			url = data.files[i]
+			type = data.files[i].substr(data.files[i].indexOf(".") + 1)
+		}
+		// let type = data.files[i].substr(data.files[i].indexOf(".") + 1)
 		p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}fileType=${type}&temp=${options.temp}`, 'GET', {}, {
 		    token: api1.data
 		}).then(async (api2) => {
 		    if(api2.success) {
 				uni.uploadFile({
 				    url: api2.data.uploadUrl,
-				    filePath: data.files[i],
+				    filePath: url,
 				    name: 'file',
 					formData: {
 						"url": api2.data.formData.host,

@@ -48,6 +48,18 @@ export function p_fetch(url, method, body, headers) {
                 req = new Request(url, {method, body, headers})
             }
             const data = await fetch(req)
+            if (req.method === 'PUT') {
+                if (data.status == 200) {
+                    resolve({
+                        success: true
+                    })
+                } else {
+                    reject({
+                        success: false
+                    })
+                }
+                return
+            }
             const responseJson = await data.json()
             resolve(responseJson)
         }
@@ -79,7 +91,7 @@ export function p_tenantId({
             tenantStr = _getDomain()
         }
         try {
-            let  req = new Request(`${baseUrl}/${url}?uniqueName=${tenantStr}`, {method: 'GET', cache: 'reload'})
+            let req = new Request(`${baseUrl}/${url}?uniqueName=${tenantStr}`, {method: 'GET', cache: 'reload'})
             const tenant = await fetch(req)
             const responseJson = await tenant.json()
             resolve(responseJson)
@@ -291,13 +303,18 @@ export function p_initVue({
         fileType(String): 文件类型，可选值：base64、file(默认)
         token(*String)
         width(Number): 开启图片压缩时传递，压缩的图片宽度，默认值：500
-        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头！！！
+        baseUrl(*String): 应用的基本地址    注意：不要以斜杠开头结尾！！！
         uploadBaseUrl(*String)：上传的api基本地址     注意：不要以斜杠开头！！！
-        uploadUrl(String)：上传的api地址，默认为：'alpha/upload_file.do'      注意：不要以斜杠开头！！！
+        uploadUrl(String)：上传的api地址，      注意：不要以斜杠开头！！！
+                * 当文件类型为file时，默认为：'alpha/get_upload_url.do'，需要先调用此接口获取上传的临时地址
+                * 当文件类型为base64时，地址为： 'alpha/upload_base64_file.do'
+				* 小程序上传，默认地址为: 'alpha/get_upload_url_post.do'，需要先调用此接口获取上传的临时地址
         decryUrl(String): 加密转解密接口，默认为：'alpha/get_file_url_key.do'      注意：不要以斜杠开头！！！
         tokenUrl(String): 上传前的token转换接口，默认为：'base/api/file/token'      注意：不要以斜杠开头！！！
         maxLength(Number): 最大上传文件个数，默认为9
         openCompress(Boolean): 文件上传前是否开启压缩功能，默认为false
+        filePath(String): 保存的文件名或者相对文件路径（不传时由服务器自动生成文件路径）
+        temp(Boolean)： 是否临时文件，默认为false，当为true时返回的地址以“/temp”开头。当filePath不为空时，此字段无效
     }
  }
  *Date: 2021-05-12 13:51:50
@@ -356,42 +373,58 @@ function uploadimg(api1, data, options, callback) {
 	let success = data.success ? data.success : 0
 	let fail = data.fail ? data.fail : 0
     if(_environ() === 'miniapp') {
-        uni.uploadFile({
-            url: `${options.uploadBaseUrl}/${options.uploadUrl}`,
-            filePath: data.files[i],
-            name: 'file',
-            header: {
-                token: api1.data
-            },
-            success: async (res) => {
-                success++
-                let _data = JSON.parse(res.data)
-                uploadimg_success.push({
-                    encryUrl: _data.data,
-                    decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${_data.data}`, api1.data),
-                    msg: 'ok'
-                })
-            },
-            fail: (err) => {
-                fail++
-                failData.arr.push(i)
-            },
-            complete: () => {
-                setTimeout(() => {
-                    i++
-                    if (i == data.files.length) {
-                        failData.number = fail
-                        callback(uploadimg_success, failData)
-                    } else {
-                        data.i = i
-                        data.success = success
-                        data.fail = fail
-                        uploadimg(api1, data, options,callback)
-                    }
-                }, 200)
-            }
-        })
-    }else {
+		let type = data.files[i].substr(data.files[i].indexOf(".") + 1)
+		p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}fileType=${type}&temp=${options.temp}`, 'GET', {}, {
+		    token: api1.data
+		}).then(async (api2) => {
+		    if(api2.success) {
+				uni.uploadFile({
+				    url: api2.data.uploadUrl,
+				    filePath: data.files[i],
+				    name: 'file',
+					formData: {
+						"url": api2.data.formData.host,
+						"key": api2.data.formData.key,
+						"policy": api2.data.formData.policy,
+						"x-amz-algorithm": api2.data.formData.xamzalgorithm,
+						"x-amz-credential": api2.data.formData.xamzcredential,
+						"x-amz-date": api2.data.formData.xamzdate,
+						"x-amz-signature": api2.data.formData.xamzsignature,
+					},
+					header: {
+					    token: api1.data,
+						"Content-Type": "multipart/form-data",
+					},
+				    success: async (res) => {
+				        success++
+				        uploadimg_success.push({
+				            encryUrl: api2.data.filePath,
+				            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, api1.data),
+				            msg: 'ok'
+				        })
+				    },
+				    fail: (err) => {
+				        fail++
+				        failData.arr.push(i)
+				    },
+				    complete: () => {
+				        setTimeout(() => {
+				            i++
+				            if (i == data.files.length) {
+				                failData.number = fail
+				                callback(uploadimg_success, failData)
+				            } else {
+				                data.i = i
+				                data.success = success
+				                data.fail = fail
+				                uploadimg(api1, data, options, callback)
+				            }
+				        }, 200)
+				    }
+				})
+		    }
+		})
+    } else {
         if(options.openCompress) {
             let img = document.createElement('img')
             let cvs = document.createElement('canvas')
@@ -409,8 +442,9 @@ function uploadimg(api1, data, options, callback) {
                     let ctx = cvs.getContext('2d')
                     ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
                     let zipBase64 = cvs.toDataURL()
-                    const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', zipBase64, {
-                        token: api1.data
+                    const api2 = await p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', `"${zipBase64}"`, {
+                        token: api1.data,
+                        'Content-Type': 'application/json'
                     })
                     try{
                         if(api2.success) {
@@ -443,72 +477,85 @@ function uploadimg(api1, data, options, callback) {
                 }
             }
         }else {
-            let formData = new FormData()
-            formData.append('file', data.files[i])
             if(options.fileType === 'file') {
-                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', formData, {
+                let formData = new FormData()
+                formData.append('file', data.files[i])
+                let type = data.files[i].type.substr(data.files[i].type.indexOf("/") + 1)
+                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}fileType=${type}&temp=${options.temp}`, 'GET', {}, {
                     token: api1.data
                 }).then(async (api2) => {
                     if(api2.success) {
-                        success++
-                        uploadimg_success.push({
-                            encryUrl: api2.data,
-                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
-                            msg: 'ok'
+                        p_fetch(`${api2.data.uploadUrl}`, 'PUT', data.files[i], {
+                            token: api1.data
+                        }).then(async (api3) => {
+                            if(api3.success) {
+                                success++
+                                uploadimg_success.push({
+                                    encryUrl: api2.data.filePath,
+                                    decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, api1.data),
+                                    msg: 'ok'
+                                })
+                            } else {
+                                fail++
+                                failData.arr.push(i)
+                            }
+                        }).catch(() => {
+                            fail++
+                            failData.arr.push(i) 
+                        }).finally(() => {
+                            setTimeout(() => {
+                                i++
+                                if (i == data.files.length) {
+                                    failData.number = fail
+                                    callback(uploadimg_success, failData)
+                                } else {
+                                    data.i = i
+                                    data.success = success
+                                    data.fail = fail
+                                    uploadimg(api1, data, options, callback)
+                                }
+                            }, 200)
                         })
-                    }else {
-                        fail++
-                        failData.arr.push(i) 
                     }
-                }).catch(() => {
-                    fail++
-                    failData.arr.push(i) 
-                }).finally(() => {
-                    setTimeout(() => {
-                        i++
-                        if (i == data.files.length) {
-                            failData.number = fail
-                            callback(uploadimg_success, failData)
-                        } else {
-                            data.i = i
-                            data.success = success
-                            data.fail = fail
-                            uploadimg(api1, data, options,callback)
-                        }
-                    }, 200)
                 })
             }else {
-                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}`, 'POST', data.files[i], {
-                    token: api1.data
-                }).then(async (api2) => {
-                    if(api2.success) {
-                        success++
-                        uploadimg_success.push({
-                            encryUrl: api2.data,
-                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
-                            msg: 'ok'
-                        })
-                    }else {
+                let reader = new FileReader()
+                reader.readAsDataURL(data.files[i])
+                reader.onload = function(e) {
+                    let naturalBase64 = e.target.result
+                    p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}temp=${options.temp}`, 'POST', `"${naturalBase64}"`, {
+                        token: api1.data,
+                        'Content-Type': 'application/json'
+                    }).then(async (api2) => {
+                        if(api2.success) {
+                            success++
+                            uploadimg_success.push({
+                                encryUrl: api2.data,
+                                decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                                msg: 'ok'
+                            })
+                        }else {
+                            fail++
+                            failData.arr.push(i) 
+                        }
+                    }).catch(() => {
                         fail++
                         failData.arr.push(i) 
-                    }
-                }).catch(() => {
-                    fail++
-                    failData.arr.push(i) 
-                }).finally(() => {
-                    setTimeout(() => {
-                        i++
-                        if (i == data.files.length) {
-                            failData.number = fail
-                            callback(uploadimg_success, failData)
-                        } else {
-                            data.i = i
-                            data.success = success
-                            data.fail = fail
-                            uploadimg(api1, data, options,callback)
-                        }
-                    }, 200)
-                })
+                    }).finally(() => {
+                        setTimeout(() => {
+                            i++
+                            if (i == data.files.length) {
+                                failData.number = fail
+                                callback(uploadimg_success, failData)
+                            } else {
+                                data.i = i
+                                data.success = success
+                                data.fail = fail
+                                uploadimg(api1, data, options, callback)
+                            }
+                        }, 200)
+                    })
+                }
             }
         }
     }
@@ -523,19 +570,21 @@ export function p_uploadFile(files, options) {
     !options.openCompress && (options.openCompress = false)
 	!options.quality && (options.quality = 80)
     if(_environ() === 'miniapp') {
-        !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
+        !options.uploadUrl && (options.uploadUrl = 'alpha/get_upload_url_post.do')
     }else {
         if(options.openCompress || options.fileType === 'base64') {
             !options.uploadUrl && (options.uploadUrl = 'alpha/upload_base64_file.do')
         }else {
-            !options.uploadUrl && (options.uploadUrl = 'alpha/upload_file.do')
+            !options.uploadUrl && (options.uploadUrl = 'alpha/get_upload_url.do')
         }
     }
+
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
     !options.fileType && (options.fileType = 'file')
     !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
     !options.width && (options.width = 500)
     !options.maxLength && (options.maxLength = 9)
+    !options.temp && (options.temp = false)
     return new Promise(async (resolve, reject) => {
         // 基本入参验证
         if(!files.length) {
@@ -565,7 +614,6 @@ export function p_uploadFile(files, options) {
 			if(_environ() === 'miniapp') {
 				if(options.openCompress) {
 					getCompressImage({files}, options, (newarr) => {
-						console.log('newarr', newarr)
 						uploadimg(api1, {files: newarr}, options, (arr, failData) => {
 						    resolve(print(arr, true, {failData}))
 						})

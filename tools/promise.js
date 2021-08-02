@@ -534,7 +534,41 @@ function uploadimg(api1, data, options, callback) {
                         })
                     }
                 })
-            }else {
+            } else if (options.fileType === 'base64') {
+                let naturalBase64 = data.files[i]
+                p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}temp=${options.temp}`, 'POST', `"${naturalBase64}"`, {
+                    token: api1.data,
+                    'Content-Type': 'application/json'
+                }).then(async (api2) => {
+                    if(api2.success) {
+                        success++
+                        uploadimg_success.push({
+                            encryUrl: api2.data,
+                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                            msg: 'ok'
+                        })
+                    }else {
+                        fail++
+                        failData.arr.push(i) 
+                    }
+                }).catch(() => {
+                    fail++
+                    failData.arr.push(i) 
+                }).finally(() => {
+                    setTimeout(() => {
+                        i++
+                        if (i == data.files.length) {
+                            failData.number = fail
+                            callback(uploadimg_success, failData)
+                        } else {
+                            data.i = i
+                            data.success = success
+                            data.fail = fail
+                            uploadimg(api1, data, options, callback)
+                        }
+                    }, 200)
+                })
+            } else {
                 let reader = new FileReader()
                 reader.readAsDataURL(data.files[i])
                 reader.onload = function(e) {

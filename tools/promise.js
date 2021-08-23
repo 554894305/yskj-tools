@@ -343,7 +343,7 @@ let failData = {
 }
 function compressImage(src, quality) {
 	return new Promise((resolve) => {
-		let type = src.substr(src.indexOf(".") + 1)
+		let type = src.substr(src.lastIndexOf(".") + 1)
 		uni.compressImage({
 			src,
 			quality,
@@ -387,7 +387,7 @@ function uploadimg(api1, data, options, callback) {
 			type = data.files[i].type
 		} else {
 			url = data.files[i]
-			type = data.files[i].substr(data.files[i].indexOf(".") + 1)
+			type = data.files[i].substr(data.files[i].lastIndexOf(".") + 1)
 		}
 		// let type = data.files[i].substr(data.files[i].indexOf(".") + 1)
 		p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}fileType=${type}&temp=${options.temp}`, 'GET', {}, {
@@ -496,7 +496,7 @@ function uploadimg(api1, data, options, callback) {
             if(options.fileType === 'file') {
                 let formData = new FormData()
                 formData.append('file', data.files[i])
-                let type = data.files[i].type.substr(data.files[i].type.indexOf("/") + 1)
+                let type = data.files[i].name.substr(data.files[i].name.lastIndexOf('.') + 1)
                 p_fetch(`${options.uploadBaseUrl}/${options.uploadUrl}?${options.filePath ? `filePath=${options.filePath}&` : ''}fileType=${type}&temp=${options.temp}`, 'GET', {}, {
                     token: api1.data
                 }).then(async (api2) => {

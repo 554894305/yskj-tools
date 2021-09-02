@@ -119,7 +119,7 @@ export function p_tenantId({
 let decryFunArr = []
 function decryFun(options, data, token, callback) {
     let iii = data.iii ? data.iii : 0
-    getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${data.isObj ? data.files[iii][options.key] : data.files[iii]}`, token).then((url) => {
+    getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${data.isObj ? data.files[iii][options.key] : data.files[iii]}`, token).then((url) => {
         if(data.isObj) {
             let file = data.files[iii]
             decryFunArr.push({
@@ -158,14 +158,14 @@ export function p_decryUrl(decryData = '', options) {
                     decryFun(options, {
                         files: decryData,
                         isObj: true,
-                    }, token.data, (arr) => {
+                    }, options.token, (arr) => {
                         resolve(print(arr, true))
                     })   
                 }else {
                     decryFun(options, {
                         files: decryData,
                         isObj: false
-                    }, token.data, (arr) => {
+                    }, options.token, (arr) => {
                         resolve(print(arr, true))
                     }) 
                 }
@@ -176,7 +176,7 @@ export function p_decryUrl(decryData = '', options) {
                     }, true))
                     return
                 }
-                getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${decryData}`, token.data).then((data) => {
+                getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${decryData}`, options.token).then((data) => {
                     resolve(print({
                         url: data
                     }, true))
@@ -323,7 +323,7 @@ function getHttpUrl(url, token) {
     return new Promise(async (resolve, reject) => {
         try {
             const url1 = await p_fetch(url, 'GET', {}, {
-                token
+                Authorization: 'Bearer ' + token
             })
             if(url1.success) {
                 resolve(url1.data)
@@ -415,7 +415,7 @@ function uploadimg(api1, data, options, callback) {
 				        success++
 				        uploadimg_success.push({
 				            encryUrl: api2.data.filePath,
-				            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, api1.data),
+				            decryUrl: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, options.token),
 				            msg: 'ok'
 				        })
 				    },
@@ -467,7 +467,7 @@ function uploadimg(api1, data, options, callback) {
                             success++
                             uploadimg_success.push({
                                 encryUrl: api2.data,
-                                decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                                decryUrl: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data}`, options.token),
                                 msg: 'ok'
                             })
                         }else {
@@ -508,7 +508,7 @@ function uploadimg(api1, data, options, callback) {
                                 success++
                                 uploadimg_success.push({
                                     encryUrl: api2.data.filePath,
-                                    decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, api1.data),
+                                    decryUrl: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, options.token),
                                     msg: 'ok'
                                 })
                             } else {
@@ -544,7 +544,7 @@ function uploadimg(api1, data, options, callback) {
                         success++
                         uploadimg_success.push({
                             encryUrl: api2.data,
-                            decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                            decryUrl: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data}`, options.token),
                             msg: 'ok'
                         })
                     }else {
@@ -581,7 +581,7 @@ function uploadimg(api1, data, options, callback) {
                             success++
                             uploadimg_success.push({
                                 encryUrl: api2.data,
-                                decryUrl: await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data),
+                                decryUrl: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data}`, options.token),
                                 msg: 'ok'
                             })
                         }else {
@@ -631,7 +631,7 @@ export function p_uploadFile(files, options) {
 
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
     !options.fileType && (options.fileType = 'file')
-    !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
+    !options.decryUrl && (options.decryUrl = 'base/api/file/convert/no')
     !options.width && (options.width = 500)
     !options.maxLength && (options.maxLength = 9)
     !options.temp && (options.temp = false)

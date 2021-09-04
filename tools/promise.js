@@ -142,7 +142,7 @@ function decryFun(options, data, token, callback) {
 }
 export function p_decryUrl(decryData = '', options) {
     !options.tokenUrl && (options.tokenUrl = 'base/api/file/token')
-    !options.decryUrl && (options.decryUrl = 'alpha/get_file_url_key.do')
+    !options.decryUrl && (options.decryUrl = 'base/api/file/convert/no')
     return new Promise(async (resolve, reject) => {
         if(!options.token) {
             resolve(print('token未传', false))

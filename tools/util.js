@@ -35,7 +35,7 @@ export function _debounce(fn, interval) {
  *Date: 2021-04-26 14:32:10
 */
 export function _query(paraName) {
-    let url = decodeURIComponent(document.location.toString())
+    let url = document.location.toString()
     let arrObj = url.split('?')
     if (arrObj.length > 2) {
         for (let x = 1; x < arrObj.length; x++) {

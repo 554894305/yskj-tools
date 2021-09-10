@@ -1,14 +1,14 @@
 {
   "name": "yskj-tools",
-  "version": "1.2.24-beta",
-  "description": "元素科技前端公用tools库",
+  "version": "1.2.26-beta",
+  "description": "XXXX前端公用tools库",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "http://192.168.38.83/big_sc_fn/yskj-tools.git"
+    "url": "https://192.168.38.83/big_sc_fn/yskj-tools.git"
   },
   "keywords": [
     "工具"

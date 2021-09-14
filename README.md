@@ -1,4 +1,4 @@
-#### 最新版本 V1.2.20
+#### 最新版本 V1.2.21
  
 ###### 更新说明(V1.2.x)
     新增_environ(判断当前所处的环境)基础函数
@@ -19,6 +19,7 @@
     新增文件解密方法p_decryUrl *1.2.15
     文件解密方法p_decryUrl新增支持：字符串，数据，json数组格式 *1.2.17
     文件上传统一替换 *1.2.20
+    修改_query方法，添加参数
 
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
@@ -35,7 +36,7 @@ for (const keys of Object.keys(tools)) {
 #### 基础工具类方法
 | 方法名|方法说明|
 |-|:-:|
-| _query| 截取URL参数值
+| _query| [截取URL参数值](#query)
 | _random| 生成大位随机数
 | _format| [时间格式化](#format)
 | _unique| [JSON数组去重](#unique)
@@ -61,6 +62,18 @@ for (const keys of Object.keys(tools)) {
 | v_file| [表单验证](#file)
 | v_idCard| [身份证验证](#idCard)
 
+##### <a name="query">截取URL参数值<a>
+    功能：截取URL参数值
+    参数：{
+        paraName：URL参数的键名
+        noDecode: 是否不解密url, 默认为false, 解密
+    }
+    用法：如下
+```js
+let url = 'xxx?name=张三'
+_query('name') // 张三
+_query('name', true) // %E5%88%98%E6%B8%85
+```
 ##### <a name="format">时间格式化<a>
     功能：时间格式化
     参数：{

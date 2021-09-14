@@ -31,11 +31,12 @@ export function _debounce(fn, interval) {
  *作者: xiehuan
  *参数: {
     paraName：URL参数的键名
+    noDecode: 是否不解密url, 默认为false, 解密
  }
  *Date: 2021-04-26 14:32:10
 */
-export function _query(paraName) {
-    let url = document.location.toString()
+export function _query(paraName, noDecode) {
+    let url = noDecode ? document.location.toString() :decodeURIComponent(document.location.toString())
     let arrObj = url.split('?')
     if (arrObj.length > 2) {
         for (let x = 1; x < arrObj.length; x++) {

@@ -214,8 +214,8 @@ export function _getDomain() {
  }
  *Date: 2021-04-28 15:11:03
 */
-export function _urlDel(name){
-    let url = window.location.href
+export function _urlDel(name, _url){
+    let url = _url ? _url : window.location.href
     let urlArr = url.split('?')
     if(urlArr.length > 1 && urlArr[1].indexOf(name) > -1){
         let query = urlArr[1]

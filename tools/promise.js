@@ -322,7 +322,7 @@ export function p_initVue({
 function getHttpUrl(url, token, options) {
     return new Promise(async (resolve, reject) => {
         try {
-            const url1 = await p_fetch(url, 'GET', {}, options.isFileDecry ? {
+            const url1 = await p_fetch(url, 'GET', {}, (options && options.isFileDecry) ? {
                 token: token
             } : {
 				Authorization: 'Bearer ' + token

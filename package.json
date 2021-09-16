@@ -17,8 +17,5 @@
   "license": "ISC",
   "__npminstall_done": "Wed Apr 14 2021 15:36:17 GMT+0800 (GMT+08:00)",
   "_from": "yskj-tools@1.0.0",
-  "_resolved": "https://registry.npm.taobao.org/yskj-tools/download/yskj-tools-1.0.0.tgz",
-  "dependencies": {
-    "yskj-tools": "^1.2.11"
-  }
+  "_resolved": "https://registry.npm.taobao.org/yskj-tools/download/yskj-tools-1.0.0.tgz"
 }

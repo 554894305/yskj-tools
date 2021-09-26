@@ -420,7 +420,8 @@ function uploadimg(api1, data, options, callback) {
 							decryUrl: options.isFileDecry
 								? await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`,api1.data, options) 
 								: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, options.token, options),
-							msg: 'ok'
+							msg: 'ok',
+                            file: data.files[i]
 						})
 				    },
 				    fail: (err) => {
@@ -474,7 +475,8 @@ function uploadimg(api1, data, options, callback) {
 								decryUrl: options.isFileDecry
 									? await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data, options)
 									: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data}`, options.token, options),
-								msg: 'ok'
+								msg: 'ok',
+                                file: data.files[i]
 							})
                         }else {
                             fail++
@@ -517,7 +519,8 @@ function uploadimg(api1, data, options, callback) {
 									decryUrl: options.isFileDecry
 										? await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, api1.data, options)
 										: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data.filePath}`, options.token, options),
-									msg: 'ok'
+									msg: 'ok',
+                                    file: data.files[i]
 								})
                             } else {
                                 fail++
@@ -594,7 +597,8 @@ function uploadimg(api1, data, options, callback) {
 								decryUrl: options.isFileDecry
 									? await getHttpUrl(`${options.uploadBaseUrl}/${options.decryUrl}?filePath=${api2.data}`, api1.data)
 									: await getHttpUrl(`${options.baseUrl}/${options.decryUrl}?filePath=${api2.data}`, options.token),
-								msg: 'ok'
+								msg: 'ok',
+                                file: data.files[i]
 							})
                         }else {
                             fail++

@@ -138,12 +138,13 @@ v_phone(1772645777) // false
     功能：上传前校验文件是否合法
     参数：{
         file: file文件对象
-        str: 当前校验的对象（video，image，word, excel）
-        filesize: 自定义最大上传容量，filesize默认大小为10，单位为'MB'，目前支持的单位有'KB', 'MB', 'GB'
+        option: {
+            type: 文件校验类型， 可选值：video，image，excel，word
+            size: 大小 MB
+        }
     }
     用法：如下
 ```js
-v_file(file, 'image', { size: 10, units: 'MB' })
 
 // 如果上传的文件类型正确，没有超出最大上传容量，则返回：
 {

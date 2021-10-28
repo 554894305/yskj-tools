@@ -650,13 +650,13 @@ function checkFiles(files, options) {
                     type: options.verify.type,
                     size: options.verify.size
                 })) {
-                    arr.push(index + 1)
+                    arr.push(`"${item.name}"`)
                 }
             })
             if(!arr.length) {
                 resolve()
             }else {
-                reject(`第${arr.join(',')}项不符合上传要求（可能原因：不是目标格式，大小超过最大限制）`)
+                reject(`${arr.join(',')}不符合上传要求（可能原因：不是目标格式，大小超过最大限制）`)
             }
         }else {
             resolve()

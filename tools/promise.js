@@ -3,6 +3,9 @@ import {
     _getDomain,
     _environ
 } from './util'
+import {
+    v_file
+} from './validation'
 
 function print(data, flag, options) {
     !options && (options = {})
@@ -626,6 +629,40 @@ function uploadimg(api1, data, options, callback) {
         }
     }
 }
+function checkFiles(files, options) {
+    return new Promise((resolve, reject) => {
+        if(!files.length) {
+            reject('至少上传一项')
+            return
+        }
+        if(_environ() === 'miniapp') {
+			resolve()
+			return
+		}
+        if(options.fileType !== 'file') {
+            resolve()
+            return
+        }
+        if(options.verify && options.verify.type) {
+            let arr = []
+            files.map((item, index) => {
+                if(!v_file(item, {
+                    type: options.verify.type,
+                    size: options.verify.size
+                })) {
+                    arr.push(index + 1)
+                }
+            })
+            if(!arr.length) {
+                resolve()
+            }else {
+                reject(`第${arr.join(',')}项不符合上传要求（可能原因：不是目标格式，大小超过最大限制）`)
+            }
+        }else {
+            resolve()
+        }
+    })
+}
 export function p_uploadFile(files, options) {
     uploadimg_success = []
     compressImageArr = []
@@ -654,47 +691,47 @@ export function p_uploadFile(files, options) {
     !options.temp && (options.temp = false)
     return new Promise(async (resolve, reject) => {
         // 基本入参验证
-        if(!files.length) {
-            resolve(print('至少上传一项', false))
-            return
-        }
-        if(!options.baseUrl) {
-            resolve(print('应用的基本请求地址未传-baseUrl', false))
-            return
-        }
-        if(!options.uploadBaseUrl) {
-            resolve(print('文件上传基本请求地址未传-uploadBaseUrl', false))
-            return
-        }
-        if(!options.token) {
-            resolve(print('token未传', false))
-            return
-        }
-        if(files.length > options.maxLength) {
-            resolve(print('超出最大上传个数-' + options.maxLength, false))
-            return
-        }
-        const api1 = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
-            Authorization: `Bearer ${options.token}`
+        checkFiles(files, options).then(async () => {
+            if(!options.baseUrl) {
+                reject(print('应用的基本请求地址未传-baseUrl', false))
+                return
+            }
+            if(!options.uploadBaseUrl) {
+                reject(print('文件上传基本请求地址未传-uploadBaseUrl', false))
+                return
+            }
+            if(!options.token) {
+                reject(print('token未传', false))
+                return
+            }
+            if(files.length > options.maxLength) {
+                reject(print('超出最大上传个数-' + options.maxLength, false))
+                return
+            }
+            const api1 = await p_fetch(`${options.baseUrl}/${options.tokenUrl}`, 'GET', {}, {
+                Authorization: `Bearer ${options.token}`
+            })
+            if(api1.success) {
+                if(_environ() === 'miniapp') {
+                    if(options.openCompress) {
+                        getCompressImage({files}, options, (newarr) => {
+                            uploadimg(api1, {files: newarr}, options, (arr, failData) => {
+                                resolve(print(arr, true, {failData}))
+                            })
+                        })
+                    }else {
+                        uploadimg(api1, {files}, options, (arr, failData) => {
+                            resolve(print(arr, true, {failData}))
+                        })
+                    }
+                }else {
+                    uploadimg(api1, {files}, options, (arr, failData) => {
+                        resolve(print(arr, true, {failData}))
+                    })
+                }
+            }
+        }).catch((err) => {
+            reject(print(err, false))
         })
-        if(api1.success) {
-			if(_environ() === 'miniapp') {
-				if(options.openCompress) {
-					getCompressImage({files}, options, (newarr) => {
-						uploadimg(api1, {files: newarr}, options, (arr, failData) => {
-						    resolve(print(arr, true, {failData}))
-						})
-					})
-				}else {
-					uploadimg(api1, {files}, options, (arr, failData) => {
-					    resolve(print(arr, true, {failData}))
-					})
-				}
-			}else {
-				uploadimg(api1, {files}, options, (arr, failData) => {
-				    resolve(print(arr, true, {failData}))
-				})
-			}
-        }
     })
 }

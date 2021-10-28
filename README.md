@@ -26,6 +26,10 @@
     迁入仓库至gitee *1.2.27
     p_uploadFile方法返回参数新增原始对象 *1.2.29
 
+    1.2.29-beta
+        1. p_uploadFile方法新增文件校验字段
+        2. 新增v_verifyForm表单校验
+
 ###### 更新说明(V1.1.0)
     1. 由于vue-cli2不支持扩展运算符的第三方库，修改export方式
 
